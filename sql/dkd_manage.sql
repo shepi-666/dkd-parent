@@ -60,5 +60,30 @@ FROM tb_partner p
          LEFT JOIN tb_node n ON p.id = n.`partner_id`
 GROUP BY p.id;
 
+-- 查询点位表的信息，同时显示设备信息
+SELECT
+    n.id,
+    n.name,
+    n.address,
+    n.business_type,
+    n.region_id,
+    n.partner_id,
+    n.create_time,
+    n.update_time,
+    n.create_by,
+    n.update_by,
+    n.remark,
+    COUNT(v.id) AS vm_count
+FROM
+    tb_node n
+LEFT JOIN
+    tb_vending_machine v ON n.id = v.node_id
+GROUP BY
+    n.id;
+    
+-- 根据区域id查询区域信息
+SELECT * FROM tb_region WHERE id=1;
+-- 根据合作商id查询合作商信息
+SELECT * FROM tb_partner WHERE id=1;
 
 
