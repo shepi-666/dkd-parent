@@ -55,6 +55,10 @@ VALUES ('天科创造产业基地', 1, 1, 1, '成都市成华区建设路1号', 
 INSERT INTO tb_node (NAME, region_id, business_type, partner_id, address, create_by, update_by, remark)
 VALUES ('盟升科创中心', 2, 2, 2, '成都市武侯区人民南路四段1号', 'admin', 'admin', '盟升科创中心在武侯区的办公地点');
 
+SELECT p.*, COUNT(n.id) AS node_count
+FROM tb_partner p
+         LEFT JOIN tb_node n ON p.id = n.`partner_id`
+GROUP BY p.id;
 
 
 
