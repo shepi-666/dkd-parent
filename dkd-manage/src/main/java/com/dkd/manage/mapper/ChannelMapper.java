@@ -58,4 +58,9 @@ public interface ChannelMapper
      * @return 结果
      */
     public int deleteChannelByIds(Long[] ids);
+
+    /**
+     * 实现批量插入货道
+     */
+    public int batchInsertChannels(List<Channel> channelList);
 }

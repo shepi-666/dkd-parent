@@ -86,3 +86,8 @@ SELECT * FROM tb_region WHERE id=1;
 -- 根据合作商id查询合作商信息
 SELECT * FROM tb_partner WHERE id=1;
 
+
+
+UPDATE tb_vending_machine SET partner_id = FLOOR(1 + RAND() * 4);
+UPDATE tb_vending_machine SET addr = (SELECT address FROM tb_node WHERE id = 1) WHERE node_id = 1;
+UPDATE tb_vending_machine SET addr = (SELECT address FROM tb_node WHERE id = 2) WHERE node_id = 2;
