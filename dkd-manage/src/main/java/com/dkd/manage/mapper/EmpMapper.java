@@ -2,6 +2,8 @@ package com.dkd.manage.mapper;
 
 import java.util.List;
 import com.dkd.manage.domain.Emp;
+import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Update;
 
 /**
  * 人员李彪Mapper接口
@@ -58,4 +60,14 @@ public interface EmpMapper
      * @return 结果
      */
     public int deleteEmpByIds(Long[] ids);
+
+
+    /**
+     * 根据regionId修改区域名称
+     * @param name
+     * @param id
+     * @return
+     */
+    @Update("update tb_emp set region_name = #{name} where region_id = #{id}")
+    public int updateByuRegionId(@Param("name") String name, @Param("id")Long id);
 }

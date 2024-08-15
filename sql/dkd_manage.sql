@@ -86,4 +86,3 @@ SELECT * FROM tb_region WHERE id=1;
 -- 根据合作商id查询合作商信息
 SELECT * FROM tb_partner WHERE id=1;
 
-

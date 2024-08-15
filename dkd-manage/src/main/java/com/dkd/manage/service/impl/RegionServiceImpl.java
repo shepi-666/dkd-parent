@@ -3,11 +3,15 @@ package com.dkd.manage.service.impl;
 import java.util.List;
 import com.dkd.common.utils.DateUtils;
 import com.dkd.manage.domain.vo.RegionVo;
+import com.dkd.manage.mapper.EmpMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.dkd.manage.mapper.RegionMapper;
 import com.dkd.manage.domain.Region;
 import com.dkd.manage.service.IRegionService;
+import org.springframework.transaction.annotation.Transactional;
+
+import javax.annotation.Resource;
 
 /**
  * 区域管理Service业务层处理
@@ -20,6 +24,9 @@ public class RegionServiceImpl implements IRegionService
 {
     @Autowired
     private RegionMapper regionMapper;
+
+    @Resource
+    private EmpMapper empMapper;
 
     /**
      * 查询区域管理
@@ -64,11 +71,18 @@ public class RegionServiceImpl implements IRegionService
      * @param region 区域管理
      * @return 结果
      */
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public int updateRegion(Region region)
     {
+        // 更新区域信息
         region.setUpdateTime(DateUtils.getNowDate());
-        return regionMapper.updateRegion(region);
+
+        int rows = regionMapper.updateRegion(region);
+
+        // 更新员工区域信息
+        empMapper.updateByuRegionId(region.getName(), region.getId());
+        return rows;
     }
 
     /**
