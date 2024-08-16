@@ -6,6 +6,7 @@ import java.util.List;
 import cn.hutool.core.bean.BeanUtil;
 import com.dkd.common.constant.DkdContants;
 import com.dkd.common.utils.DateUtils;
+import com.dkd.common.utils.bean.BeanUtils;
 import com.dkd.common.utils.uuid.UUIDUtils;
 import com.dkd.manage.domain.Channel;
 import com.dkd.manage.domain.Node;
@@ -132,6 +133,13 @@ public class VendingMachineServiceImpl implements IVendingMachineService
     @Override
     public int updateVendingMachine(VendingMachine vendingMachine)
     {
+        if(vendingMachine.getNodeId() != null) {
+            // 查询点位表，补充：区域、点位、合作商信息
+            Node node = nodeService.selectNodeById(vendingMachine.getNodeId());
+            BeanUtils.copyProperties(node, vendingMachine, "id");
+            vendingMachine.setAddr(node.getAddress());
+        }
+
         vendingMachine.setUpdateTime(DateUtils.getNowDate());
         return vendingMachineMapper.updateVendingMachine(vendingMachine);
     }
