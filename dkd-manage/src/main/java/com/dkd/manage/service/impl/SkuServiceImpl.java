@@ -108,4 +108,14 @@ public class SkuServiceImpl implements ISkuService
     {
         return skuMapper.deleteSkuBySkuId(skuId);
     }
+
+    /**
+     * 批量新增商品
+     * @param skuList
+     * @return 影响的行数
+     */
+    @Override
+    public int batchInsertSkus(List<Sku> skuList) {
+        return skuMapper.batchInsertSkus(skuList);
+    }
 }

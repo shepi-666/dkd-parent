@@ -58,4 +58,11 @@ public interface SkuMapper
      * @return 结果
      */
     public int deleteSkuBySkuIds(Long[] skuIds);
+
+
+    /**
+     *  批量插入商品
+     * @return
+     */
+    public int batchInsertSkus(List<Sku> skuList);
 }
