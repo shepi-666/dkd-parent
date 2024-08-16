@@ -65,4 +65,12 @@ public interface IChannelService
      * @return 结果
      */
     public int batchInsertChannels(List<Channel> channelList);
+
+
+    /**
+     * 根据商品ID集合统计货道数量
+     * @param skuIds
+     * @return 统计结果
+     */
+    public int countChannelBySkuIds(Long[] skuIds);
 }

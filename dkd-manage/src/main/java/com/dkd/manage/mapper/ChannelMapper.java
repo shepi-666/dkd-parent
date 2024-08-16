@@ -63,4 +63,10 @@ public interface ChannelMapper
      * 实现批量插入货道
      */
     public int batchInsertChannels(List<Channel> channelList);
+
+
+    /**
+     * 根据skuId查询货道
+     */
+    public int countChannelBySkuIds(Long[] skuIds);
 }
