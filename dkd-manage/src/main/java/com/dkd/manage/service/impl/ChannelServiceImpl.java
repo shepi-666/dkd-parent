@@ -1,7 +1,11 @@
 package com.dkd.manage.service.impl;
 
 import java.util.List;
+import java.util.stream.Collectors;
+
 import com.dkd.common.utils.DateUtils;
+import com.dkd.manage.domain.dto.ChannelConfigDto;
+import com.dkd.manage.domain.vo.ChannelVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.dkd.manage.mapper.ChannelMapper;
@@ -115,5 +119,41 @@ public class ChannelServiceImpl implements IChannelService
     public int countChannelBySkuIds(Long[] skuIds) {
 
         return channelMapper.countChannelBySkuIds(skuIds);
+    }
+
+    /**
+     * 货道关联商品
+     * @param channelConfigDto
+     * @return
+     */
+    @Override
+    public int setChannel(ChannelConfigDto channelConfigDto) {
+        // 将Dto转换为Po对象
+        List<Channel> channelList = channelConfigDto.getChannelList().stream().map(channelSkuDto -> {
+            // 根据售货机编号和货道编号查询货道信息
+            Channel channel = channelMapper.getChannelInfo(channelSkuDto.getInnerCode(), channelSkuDto.getChannelCode());
+            if (channel != null) {
+
+                // 关联商品信息
+                channel.setSkuId(channelSkuDto.getSkuId());
+                channel.setUpdateTime(DateUtils.getNowDate());
+                channelMapper.updateChannel(channel);
+            }
+            return channel;
+        }).collect(Collectors.toList());
+
+
+        // 批量修改货道对象
+        return channelMapper.batchUpdateChannels(channelList);
+    }
+
+    /**
+     * 根据售货机编号查询货道列表
+     * @param innerCode
+     * @return List<ChannelVo>
+     */
+    @Override
+    public List<ChannelVo> selectChannelVoByInnerCode(String innerCode) {
+        return channelMapper.selectChannelVoByInnerCode(innerCode);
     }
 }

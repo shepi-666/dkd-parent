@@ -1,6 +1,8 @@
 package com.dkd.manage.mapper;
 
 import java.util.List;
+
+import com.dkd.manage.domain.Channel;
 import com.dkd.manage.domain.Sku;
 
 /**
@@ -42,6 +44,8 @@ public interface SkuMapper
      * @return 结果
      */
     public int updateSku(Sku sku);
+
+
 
     /**
      * 删除商品管理
