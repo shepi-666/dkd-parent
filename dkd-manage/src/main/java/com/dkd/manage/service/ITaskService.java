@@ -78,4 +78,10 @@ public interface ITaskService
     public int insertTaskDto(TaskDto taskDto);
 
 
+    /**
+     * 取消工单
+     * @param task
+     * @return
+     */
+    public int cancelTask(Task task);
 }
