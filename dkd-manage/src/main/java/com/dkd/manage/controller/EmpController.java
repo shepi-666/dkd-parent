@@ -1,7 +1,11 @@
 package com.dkd.manage.controller;
 
 import java.util.List;
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletResponse;
+
+import com.dkd.manage.domain.VendingMachine;
+import com.dkd.manage.service.IVendingMachineService;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,8 +25,10 @@ import com.dkd.manage.service.IEmpService;
 import com.dkd.common.utils.poi.ExcelUtil;
 import com.dkd.common.core.page.TableDataInfo;
 
+import static com.dkd.common.constant.DkdContants.*;
+
 /**
- * 人员李彪Controller
+ * 人员列表Controller
  * 
  * @author javadong
  * @date 2024-08-14
@@ -34,8 +40,11 @@ public class EmpController extends BaseController
     @Autowired
     private IEmpService empService;
 
+    @Resource
+    private IVendingMachineService vendingMachineService;
+
     /**
-     * 查询人员李彪列表
+     * 查询人员列表列表
      */
     @PreAuthorize("@ss.hasPermi('manage:emp:list')")
     @GetMapping("/list")
@@ -47,20 +56,20 @@ public class EmpController extends BaseController
     }
 
     /**
-     * 导出人员李彪列表
+     * 导出人员列表列表
      */
     @PreAuthorize("@ss.hasPermi('manage:emp:export')")
-    @Log(title = "人员李彪", businessType = BusinessType.EXPORT)
+    @Log(title = "人员列表", businessType = BusinessType.EXPORT)
     @PostMapping("/export")
     public void export(HttpServletResponse response, Emp emp)
     {
         List<Emp> list = empService.selectEmpList(emp);
         ExcelUtil<Emp> util = new ExcelUtil<Emp>(Emp.class);
-        util.exportExcel(response, list, "人员李彪数据");
+        util.exportExcel(response, list, "人员列表数据");
     }
 
     /**
-     * 获取人员李彪详细信息
+     * 获取人员列表详细信息
      */
     @PreAuthorize("@ss.hasPermi('manage:emp:query')")
     @GetMapping(value = "/{id}")
@@ -70,10 +79,10 @@ public class EmpController extends BaseController
     }
 
     /**
-     * 新增人员李彪
+     * 新增人员列表
      */
     @PreAuthorize("@ss.hasPermi('manage:emp:add')")
-    @Log(title = "人员李彪", businessType = BusinessType.INSERT)
+    @Log(title = "人员列表", businessType = BusinessType.INSERT)
     @PostMapping
     public AjaxResult add(@RequestBody Emp emp)
     {
@@ -81,10 +90,10 @@ public class EmpController extends BaseController
     }
 
     /**
-     * 修改人员李彪
+     * 修改人员列表
      */
     @PreAuthorize("@ss.hasPermi('manage:emp:edit')")
-    @Log(title = "人员李彪", businessType = BusinessType.UPDATE)
+    @Log(title = "人员列表", businessType = BusinessType.UPDATE)
     @PutMapping
     public AjaxResult edit(@RequestBody Emp emp)
     {
@@ -92,13 +101,64 @@ public class EmpController extends BaseController
     }
 
     /**
-     * 删除人员李彪
+     * 删除人员列表
      */
     @PreAuthorize("@ss.hasPermi('manage:emp:remove')")
-    @Log(title = "人员李彪", businessType = BusinessType.DELETE)
+    @Log(title = "人员列表", businessType = BusinessType.DELETE)
 	@DeleteMapping("/{ids}")
     public AjaxResult remove(@PathVariable Long[] ids)
     {
         return toAjax(empService.deleteEmpByIds(ids));
     }
+
+
+    /**
+     * 根据售货机获取运营人员列表
+     * @param innerCode
+     * @return
+     */
+    @PreAuthorize("@ss.hasPermi('manage:emp:list')")
+    @GetMapping("/businessList/{innerCode}")
+    public AjaxResult businessList( @PathVariable("innerCode") String innerCode) {
+        // 1 根据innerCode查询售货机信息
+        VendingMachine machine = vendingMachineService.selectVendingMachineByInnerCode(innerCode);
+        // 2 根据区域Id，角色编号、员工状态查询运营人员列表
+
+        if (machine == null) {
+            return error("售货机不存在");
+        }
+
+        Emp emp = new Emp();
+        emp.setRegionId(machine.getRegionId());
+        emp.setRoleCode(ROLE_CODE_BUSINESS); // 运营人员角色编号
+        emp.setStatus(EMP_STATUS_NORMAL);
+
+        return success(empService.selectEmpList(emp));
+    }
+
+
+
+    /**
+     * 根据售货机获取运维人员列表
+     */
+    @PreAuthorize("@ss.hasPermi('manage:emp:list')")
+    @GetMapping("/operationList/{innerCode}")
+    public AjaxResult operationList( @PathVariable("innerCode") String innerCode) {
+        // 1 查询售货机信息
+        VendingMachine machine = vendingMachineService.selectVendingMachineByInnerCode(innerCode);
+        if (machine == null) {
+            return error("售货机不存在");
+        }
+
+        // 根据区域ID、角色编号、员工状态查询运维人员列表
+        Emp emp = new Emp();
+        emp.setRegionId(machine.getRegionId());
+        emp.setRoleCode(ROLE_CODE_OPERATOR);
+        emp.setStatus(EMP_STATUS_NORMAL);
+
+        return success(empService.selectEmpList(emp));
+
+    }
+
+
 }

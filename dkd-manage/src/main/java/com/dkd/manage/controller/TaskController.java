@@ -2,6 +2,9 @@ package com.dkd.manage.controller;
 
 import java.util.List;
 import javax.servlet.http.HttpServletResponse;
+
+import com.dkd.manage.domain.dto.TaskDto;
+import com.dkd.manage.domain.vo.TaskVo;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -42,7 +45,7 @@ public class TaskController extends BaseController
     public TableDataInfo list(Task task)
     {
         startPage();
-        List<Task> list = taskService.selectTaskList(task);
+        List<TaskVo> list = taskService.selectTaskVoList(task);
         return getDataTable(list);
     }
 
@@ -75,9 +78,10 @@ public class TaskController extends BaseController
     @PreAuthorize("@ss.hasPermi('manage:task:add')")
     @Log(title = "工单", businessType = BusinessType.INSERT)
     @PostMapping
-    public AjaxResult add(@RequestBody Task task)
-    {
-        return toAjax(taskService.insertTask(task));
+    public AjaxResult add(@RequestBody TaskDto taskDto) {
+        // 设置指派人Id
+        taskDto.setAssignorId(getUserId());
+        return toAjax(taskService.insertTaskDto(taskDto));
     }
 
     /**

@@ -2,6 +2,8 @@ package com.dkd.manage.service;
 
 import java.util.List;
 import com.dkd.manage.domain.Task;
+import com.dkd.manage.domain.dto.TaskDto;
+import com.dkd.manage.domain.vo.TaskVo;
 
 /**
  * 工单Service接口
@@ -58,4 +60,22 @@ public interface ITaskService
      * @return 结果
      */
     public int deleteTaskByTaskId(Long taskId);
+
+
+    /**
+     *  查询工单列表
+     * @param task
+     * @return
+     */
+    public List<TaskVo> selectTaskVoList(Task task);
+
+
+    /**
+     * 新增运营和运维工单
+     * @param taskDto
+     * @return
+     */
+    public int insertTaskDto(TaskDto taskDto);
+
+
 }
